@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "BombermanGameModeBase.generated.h"
 
+class APlayerCharacter;
+
 /**
  * 
  */
@@ -14,4 +16,12 @@ class BOMBERMAN_API ABombermanGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+  ABombermanGameModeBase();
+
+public:
+  virtual void StartPlay() override;
+
+protected:
+  virtual void BeginPlay() override;
 };
