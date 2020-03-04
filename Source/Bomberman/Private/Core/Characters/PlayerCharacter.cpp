@@ -52,6 +52,7 @@ void APlayerCharacter::Action() {
     if (NewBomb != NULL) {
       --CurrentBombs;
       NewBomb->OnExplode.BindUObject(this, &APlayerCharacter::OnBombExplode);
+      NewBomb->ExplosionDistance = BombBlastDistance * 100.0f;
     }
   }
 }
