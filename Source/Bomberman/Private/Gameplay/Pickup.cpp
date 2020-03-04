@@ -12,6 +12,8 @@ APickup::APickup()
   Mesh = CreateDefaultSubobject<UStaticMeshComponent>(
     FName(TEXT("Mesh")));
   SetRootComponent(Mesh);
+  Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, 
+    ECollisionResponse::ECR_Overlap);
 }
 
 // Called when the game starts or when spawned
@@ -19,6 +21,7 @@ void APickup::BeginPlay()
 {
 	Super::BeginPlay();
 	
+  OnActorBeginOverlap.AddDynamic(this, &APickup::OnBeginOverlap);
 }
 
 // Called every frame
@@ -28,6 +31,14 @@ void APickup::Tick(float DeltaTime)
 
 }
 
-void APickup::Activate(APlayerCharacter* Player) {
+void APickup::Activate_Implementation(APlayerCharacter* Player) {
 
+}
+
+void APickup::OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor) {
+  APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+  if (Player != NULL) {
+    Activate(Player);
+    Destroy();
+  }
 }

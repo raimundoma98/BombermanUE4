@@ -29,8 +29,14 @@ protected:
     meta=(UIMin=0, ClampMin=0))
     int32 StartBombs;
 
+  // Distance of bomb blasts in units of tiles.
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
+    meta = (UIMin = 1, ClampMin = 1))
+    int32 StartBombBlastDistance;
+
 private:
   int32 CurrentBombs;
+  int32 BombBlastDistance;
 
 protected:
   // Called when the game starts or when spawned
@@ -45,6 +51,12 @@ public:
 
   UFUNCTION()
     void Action();
+
+  UFUNCTION(BlueprintCallable)
+    void AddBombs(int32 Count = 1);
+
+  UFUNCTION(BlueprintCallable)
+    void IncreaseBombBlastDistance(int32 Units = 1);
 
   UFUNCTION()
     void MoveForward(float Value);

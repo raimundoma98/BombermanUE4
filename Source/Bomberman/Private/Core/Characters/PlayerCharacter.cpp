@@ -4,6 +4,7 @@
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Gameplay/Bomb.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -23,6 +24,7 @@ void APlayerCharacter::BeginPlay()
 	
   NameText->SetText(FText::FromString(GetName()));
   CurrentBombs = StartBombs;
+  BombBlastDistance = StartBombBlastDistance;
 }
 
 // Called every frame
@@ -52,6 +54,14 @@ void APlayerCharacter::Action() {
       NewBomb->OnExplode.BindUObject(this, &APlayerCharacter::OnBombExplode);
     }
   }
+}
+
+void APlayerCharacter::AddBombs(int32 Count) {
+  CurrentBombs += Count;
+}
+
+void APlayerCharacter::IncreaseBombBlastDistance(int32 Increment) {
+  BombBlastDistance += Increment;
 }
 
 void APlayerCharacter::MoveForward(float Value) {

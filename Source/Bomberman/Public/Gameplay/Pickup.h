@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Pickup.generated.h"
 
-class APlayerCharacter;
-
-UCLASS()
+UCLASS(Abstract)
 class BOMBERMAN_API APickup : public AActor
 {
 	GENERATED_BODY()
@@ -26,10 +25,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-  virtual void Activate(APlayerCharacter* Player);
+  UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+  void Activate(APlayerCharacter* Player);
+  virtual void Activate_Implementation(APlayerCharacter* Player);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+private:
+  UFUNCTION()
+    void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 };
