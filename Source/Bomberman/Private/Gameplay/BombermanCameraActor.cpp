@@ -2,6 +2,7 @@
 
 
 #include "Bomberman/Public/Gameplay/BombermanCameraActor.h"
+#include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -11,6 +12,14 @@ ABombermanCameraActor::ABombermanCameraActor() {
 
 void ABombermanCameraActor::BeginPlay() {
   Super::BeginPlay();
+
+  // Set this camera as the main camera of the game.
+  ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
+    UGameplayStatics::GetGameMode(GetWorld()));
+
+  if (GameMode != NULL) {
+    GameMode->MainCamera = this;
+  }
 
   if (FocusedActor.IsValid()) {
     FVector Location = FocusedActor->GetActorLocation();

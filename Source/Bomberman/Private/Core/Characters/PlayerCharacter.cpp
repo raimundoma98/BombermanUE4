@@ -3,8 +3,10 @@
 
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Gameplay/Bomb.h"
+#include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -42,9 +44,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 }
 
 void APlayerCharacter::Action() {
-  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan,
-    TEXT("APlayerCharacter::Action"));
-
   if (CurrentBombs > 0) {
     ABomb* NewBomb = GetWorld()->SpawnActor<ABomb>(BombBP, GetActorLocation(),
       FRotator::ZeroRotator);
@@ -52,7 +51,7 @@ void APlayerCharacter::Action() {
     if (NewBomb != NULL) {
       --CurrentBombs;
       NewBomb->OnExplode.BindUObject(this, &APlayerCharacter::OnBombExplode);
-      NewBomb->ExplosionDistance = BombBlastDistance * 100.0f;
+      NewBomb->ExplosionDistance = BombBlastDistance;
     }
   }
 }
@@ -63,6 +62,15 @@ void APlayerCharacter::AddBombs(int32 Count) {
 
 void APlayerCharacter::IncreaseBombBlastDistance(int32 Increment) {
   BombBlastDistance += Increment;
+}
+
+void APlayerCharacter::Kill() {
+  ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
+    UGameplayStatics::GetGameMode(GetWorld()));
+
+  if (GameMode != NULL) {
+    GameMode->OnPlayerDeath.Broadcast(this);
+  }
 }
 
 void APlayerCharacter::MoveForward(float Value) {

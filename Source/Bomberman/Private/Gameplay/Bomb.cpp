@@ -3,6 +3,10 @@
 
 #include "Bomberman/Public/Gameplay/Bomb.h"
 #include "Bomberman/Public/Gameplay/Wall.h"
+#include "Bomberman/Public/Gameplay/BombermanCameraActor.h"
+#include "Bomberman/Public/Gameplay/MapGenerator.h"
+#include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
+#include "kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h"
 
@@ -38,10 +42,25 @@ void ABomb::Tick(float DeltaTime)
 }
 
 void ABomb::Explode() {
-  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Magenta,
-    TEXT("ABomb::Explode"));
+  ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
+    UGameplayStatics::GetGameMode(GetWorld()));
+
+  float TotalBlastDistance = 0.0f;
+
+  if (GameMode != NULL) {
+    if (GameMode->MainCamera.IsValid()) {
+      GameMode->MainCamera->ScreenShake(ExplosionScreenShakeDuration,
+        ExplosionScreenShakeMagnitude);
+    }
+
+    if (GameMode->MapGenerator.IsValid()) {
+      TotalBlastDistance = GameMode->MapGenerator->GetTileSize() * 
+        ExplosionDistance;
+    }
+  }
 
   GetWorldTimerManager().ClearTimer(ExplosionTimer);
+  SetActorEnableCollision(false);
   OnExplode.ExecuteIfBound();
 
   FCollisionQueryParams Params;
@@ -49,10 +68,10 @@ void ABomb::Explode() {
   
   FHitResult Hit;
   FVector Start = GetActorLocation();
-  FVector LeftBlastEnd = Start + FVector::LeftVector * ExplosionDistance;
-  FVector RightBlastEnd = Start + FVector::RightVector * ExplosionDistance;
-  FVector ForwardBlastEnd = Start + FVector::ForwardVector * ExplosionDistance;
-  FVector BackwardBlastEnd = Start + FVector::BackwardVector * ExplosionDistance;
+  FVector LeftBlastEnd = Start + FVector::LeftVector * TotalBlastDistance;
+  FVector RightBlastEnd = Start + FVector::RightVector * TotalBlastDistance;
+  FVector ForwardBlastEnd = Start + FVector::ForwardVector * TotalBlastDistance;
+  FVector BackwardBlastEnd = Start + FVector::BackwardVector * TotalBlastDistance;
 
   DrawDebugLine(GetWorld(), Start, LeftBlastEnd, FColor::Red, false, 3.0f,
     (uint8)'\000', 5.0f);
@@ -85,6 +104,8 @@ void ABomb::Explode() {
   GetWorld()->LineTraceSingleByChannel(Hit, Start, BackwardBlastEnd,
     ECollisionChannel::ECC_Visibility, Params);
   CheckBlastCollision(Hit.Actor.Get());
+
+  Destroy();
 }
 
 void ABomb::CheckBlastCollision(AActor* HitActor) {

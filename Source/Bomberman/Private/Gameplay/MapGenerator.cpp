@@ -2,8 +2,10 @@
 
 
 #include "Bomberman/Public/Gameplay/MapGenerator.h"
+#include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "Bomberman/Public/Gameplay/Wall.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMapGenerator::AMapGenerator()
@@ -22,6 +24,13 @@ AMapGenerator::AMapGenerator()
 void AMapGenerator::BeginPlay()
 {
 	Super::BeginPlay();
+
+  ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
+    UGameplayStatics::GetGameMode(GetWorld()));
+
+  if (GameMode != NULL && GameMode->MapGenerator.IsValid() == false) {
+    GameMode->MapGenerator = this;
+  }
 
   FVector Min;
   FVector Max;
@@ -66,8 +75,6 @@ void AMapGenerator::GenerateMap() {
     FVector(HalfTileSize, HalfTileSize, 0.0f);
   FVector Location = TopLeft;
 
-  uint32 start = FPlatformTime::Cycles();
-
   // Traverse tiles and choose randomly to spawn a wall or not.
   for (int32 i = 0; i < MapSize; ++i) {
     for (int32 j = 0; j < MapSize; ++j) {
@@ -98,12 +105,10 @@ void AMapGenerator::GenerateMap() {
     Location.Y = TopLeft.Y;
     Location.X += TileSize;
   }
+}
 
-  uint32 end = FPlatformTime::Cycles();
-
-  GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan,
-    FString::Printf(TEXT("AMapGenerator::GenerateMap: Time: %f"),
-      FPlatformTime::ToMilliseconds(end - start)));
+float AMapGenerator::GetTileSize() const {
+  return TileSize;
 }
 
 void AMapGenerator::ShowDebugGrid() {

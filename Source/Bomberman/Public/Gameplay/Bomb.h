@@ -21,7 +21,13 @@ public:
   FOnExplode OnExplode;
 
   UPROPERTY(EditAnywhere, Category = "Properties")
-  float ExplosionDistance;
+  int32 ExplosionDistance;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScreenShake Properties")
+    float ExplosionScreenShakeMagnitude;
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ScreenShake Properties")
+    float ExplosionScreenShakeDuration;
 
 protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

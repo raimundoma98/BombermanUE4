@@ -56,6 +56,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
   void GenerateMap();
+  float GetTileSize() const;
 
   UFUNCTION(CallInEditor, Category = "Debug")
     void ShowDebugGrid();

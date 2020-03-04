@@ -58,6 +58,8 @@ public:
   UFUNCTION(BlueprintCallable)
     void IncreaseBombBlastDistance(int32 Units = 1);
 
+  void Kill();
+
   UFUNCTION()
     void MoveForward(float Value);
 
