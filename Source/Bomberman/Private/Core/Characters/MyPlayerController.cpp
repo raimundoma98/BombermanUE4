@@ -25,6 +25,14 @@ void AMyPlayerController::BeginPlay() {
   // Disable split screen.
   GetLocalPlayer()->ViewportClient->SetDisableSplitscreenOverride(true);
 
+  if (Player1 != NULL) {
+    Player1->SetColor(Player1Color);
+  }
+
+  if (Player2 != NULL) {
+    Player2->SetColor(Player2Color);
+  }
+
   /*if (InputComponent != NULL) {
     // Player1 Input.
     if (Player1 != NULL) {

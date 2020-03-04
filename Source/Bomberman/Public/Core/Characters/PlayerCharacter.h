@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TextRenderComponent.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -16,7 +17,10 @@ public:
 	APlayerCharacter();
 
 protected:
-	// Called when the game starts or when spawned
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UTextRenderComponent* NameText;
+
+  // Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
@@ -34,4 +38,6 @@ public:
 
   UFUNCTION()
     void MoveRight(float Value);
+
+  void SetColor(FColor Color);
 };

@@ -19,6 +19,12 @@ class BOMBERMAN_API AMyPlayerController : public APlayerController
 public:
   AMyPlayerController();
 
+  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Properties")
+    FColor Player1Color;
+
+  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Properties")
+    FColor Player2Color;
+
 protected:
   UPROPERTY()
     APlayerCharacter* Player1;

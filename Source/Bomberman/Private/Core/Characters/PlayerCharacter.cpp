@@ -2,13 +2,17 @@
 
 
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
+  NameText = CreateDefaultSubobject<UTextRenderComponent>(
+    FName(TEXT("Name Text")));
+  NameText->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -16,6 +20,7 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+  NameText->SetText(FText::FromString(GetName()));
 }
 
 // Called every frame
@@ -45,3 +50,9 @@ void APlayerCharacter::MoveRight(float Value) {
   AddMovementInput(FVector::RightVector, Value);
 }
 
+void APlayerCharacter::SetColor(FColor Color) {
+  NameText->SetTextRenderColor(Color);
+  
+  GetMesh()->SetVectorParameterValueOnMaterials(FName(TEXT("Color")),
+    FVector(Color.R / 255, Color.G / 255, Color.B / 255));
+}
