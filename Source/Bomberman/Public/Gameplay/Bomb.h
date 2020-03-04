@@ -5,37 +5,43 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
-#include "Wall.generated.h"
+#include "Bomb.generated.h"
+
+DECLARE_DELEGATE(FOnExplode)
 
 UCLASS()
-class BOMBERMAN_API AWall : public AActor
+class BOMBERMAN_API ABomb : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AWall();
+	ABomb();
+
+  FOnExplode OnExplode;
 
 protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    UStaticMeshComponent* Mesh;
+    UStaticMeshComponent* BombMesh;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-    UMaterialInterface* DestructibleMaterial;
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    UStaticMeshComponent* WickMesh;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
-    UMaterialInterface* InDestructibleMaterial;
+  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Properties")
+    float ExplosionCountDown;
 
 private:
-  bool bIsDestructible;
+  FTimerHandle ExplosionTimer;
 
 protected:
-	// Called when the game starts or when spawned
+  // Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-  void SetDestructible(bool Destructible);
+private:
+  UFUNCTION()
+    void Explode();
 };

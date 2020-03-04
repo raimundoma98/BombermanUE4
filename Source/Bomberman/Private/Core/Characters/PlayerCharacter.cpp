@@ -2,6 +2,7 @@
 
 
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
+#include "Bomberman/Public/Gameplay/Bomb.h"
 #include "Components/SkeletalMeshComponent.h"
 
 // Sets default values
@@ -21,6 +22,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
   NameText->SetText(FText::FromString(GetName()));
+  CurrentBombs = StartBombs;
 }
 
 // Called every frame
@@ -40,6 +42,16 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Action() {
   GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan,
     TEXT("APlayerCharacter::Action"));
+
+  if (CurrentBombs > 0) {
+    ABomb* NewBomb = GetWorld()->SpawnActor<ABomb>(BombBP, GetActorLocation(),
+      FRotator::ZeroRotator);
+
+    if (NewBomb != NULL) {
+      --CurrentBombs;
+      NewBomb->OnExplode.BindUObject(this, &APlayerCharacter::OnBombExplode);
+    }
+  }
 }
 
 void APlayerCharacter::MoveForward(float Value) {
@@ -55,4 +67,8 @@ void APlayerCharacter::SetColor(FColor Color) {
   
   GetMesh()->SetVectorParameterValueOnMaterials(FName(TEXT("Color")),
     FVector(Color.R / 255, Color.G / 255, Color.B / 255));
+}
+
+void APlayerCharacter::OnBombExplode() {
+  ++CurrentBombs;
 }

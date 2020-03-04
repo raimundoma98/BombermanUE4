@@ -33,9 +33,9 @@ void AWall::SetDestructible(bool Destructible) {
   bIsDestructible = Destructible;
 
   if (bIsDestructible) {
-    Mesh->SetStaticMesh(DestructibleMesh);
+    Mesh->SetMaterial(0, DestructibleMaterial);
   }
   else {
-    Mesh->SetStaticMesh(IndestructibleMesh);
+    Mesh->SetMaterial(0, InDestructibleMaterial);
   }
 }

@@ -7,6 +7,8 @@
 #include "Components/TextRenderComponent.h"
 #include "PlayerCharacter.generated.h"
 
+class ABomb;
+
 UCLASS()
 class BOMBERMAN_API APlayerCharacter : public ACharacter
 {
@@ -16,10 +18,21 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+    TSubclassOf<ABomb> BombBP;
+
 protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UTextRenderComponent* NameText;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", 
+    meta=(UIMin=0, ClampMin=0))
+    int32 StartBombs;
+
+private:
+  int32 CurrentBombs;
+
+protected:
   // Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -40,4 +53,8 @@ public:
     void MoveRight(float Value);
 
   void SetColor(FColor Color);
+
+private:
+  UFUNCTION()
+    void OnBombExplode();
 };
