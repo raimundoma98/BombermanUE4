@@ -7,6 +7,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Wall.generated.h"
 
+class APickup;
+
 UCLASS()
 class BOMBERMAN_API AWall : public AActor
 {
@@ -15,6 +17,9 @@ class BOMBERMAN_API AWall : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWall();
+
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+    TArray<TSubclassOf<APickup>> PickupsBP;
 
 protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -26,6 +31,10 @@ protected:
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
     UMaterialInterface* InDestructibleMaterial;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
+    meta = (UIMin = 0, UIMax = 100, ClampMin = 0, ClampMax = 100))
+    int32 SpawnPickupProbability;
+
 private:
   bool bIsDestructible;
 
@@ -34,8 +43,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+  virtual void BeginDestroy() override;
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+  void Break();
+
+  bool IsDestructible() const;
   void SetDestructible(bool Destructible);
 };

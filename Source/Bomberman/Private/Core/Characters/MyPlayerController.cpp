@@ -13,9 +13,16 @@ AMyPlayerController::AMyPlayerController() {
 void AMyPlayerController::BeginPlay() {
   Super::BeginPlay();
 
-  Player1 = Cast<APlayerCharacter>(GetPawn());
-
+  // Get player 1.
   APlayerController* Controller = UGameplayStatics::GetPlayerController(
+    GetWorld(), 0);
+
+  if (Controller != NULL) {
+    Player1 = Cast<APlayerCharacter>(Controller->GetPawn());
+  }
+
+  // Get player 2.
+  Controller = UGameplayStatics::GetPlayerController(
     GetWorld(), 1);
 
   if (Controller != NULL) {
@@ -86,7 +93,7 @@ void AMyPlayerController::SetupInputComponent() {
   }
 }
 
-void AMyPlayerController::ActionPlayer1() {
+void AMyPlayerController::ActionPlayer1() {  
   if (Player1 != NULL) {
     Player1->Action();
   }

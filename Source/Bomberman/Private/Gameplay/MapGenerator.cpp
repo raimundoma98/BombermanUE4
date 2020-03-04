@@ -77,7 +77,7 @@ void AMapGenerator::GenerateMap() {
         AWall* Wall = GetWorld()->SpawnActor<AWall>(WallBP, Location,
           FRotator::ZeroRotator);
 
-        Wall->SetActorScale3D(FVector(TileScale));
+        Wall->SetActorScale3D(FVector(TileScale, TileScale, TileZScale));
         // TODO: Adjust Z location.
         Wall->SetDestructible(false);
       }
@@ -87,7 +87,7 @@ void AMapGenerator::GenerateMap() {
         AWall* Wall = GetWorld()->SpawnActor<AWall>(WallBP, Location,
           FRotator::ZeroRotator);
 
-        Wall->SetActorScale3D(FVector(TileScale));
+        Wall->SetActorScale3D(FVector(TileScale, TileScale, TileZScale));
         // TODO: Adjust Z location.
 
         // Choose randomly if a wall is destructible or not.

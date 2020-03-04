@@ -2,6 +2,7 @@
 
 
 #include "Bomberman/Public/Gameplay/Wall.h"
+#include "Bomberman/Public/Gameplay/Pickup.h"
 
 // Sets default values
 AWall::AWall()
@@ -22,11 +23,41 @@ void AWall::BeginPlay()
   SetDestructible(bIsDestructible);
 }
 
+void AWall::BeginDestroy() {
+  Super::BeginDestroy();
+
+}
+
 // Called every frame
 void AWall::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AWall::Break() {
+  if (bIsDestructible) {
+    GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan,
+      TEXT("AWall::Break"));
+
+    if (SpawnPickupProbability > 0 &&
+      FMath::RandRange(0, 99) < SpawnPickupProbability) {
+      GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow,
+        TEXT("AWall::Break: Spawn Pickup"));
+
+      TSubclassOf<APickup> PickupBP = 
+        PickupsBP[FMath::RandRange(0, PickupsBP.Num() - 1)];
+      
+      APickup* Pickup = GetWorld()->SpawnActor<APickup>(PickupBP, GetActorLocation(), 
+        FRotator::ZeroRotator);
+    }
+
+    Destroy();
+  }
+}
+
+bool AWall::IsDestructible() const {
+  return bIsDestructible;
 }
 
 void AWall::SetDestructible(bool Destructible) {

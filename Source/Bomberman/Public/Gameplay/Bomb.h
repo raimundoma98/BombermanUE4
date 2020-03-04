@@ -20,6 +20,9 @@ public:
 
   FOnExplode OnExplode;
 
+  UPROPERTY(EditAnywhere, Category = "Properties")
+  float ExplosionDistance;
+
 protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* BombMesh;
@@ -44,4 +47,6 @@ public:
 private:
   UFUNCTION()
     void Explode();
+
+  void CheckBlastCollision(AActor* HitActor);
 };

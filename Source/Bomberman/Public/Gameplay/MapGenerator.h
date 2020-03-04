@@ -26,6 +26,10 @@ protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* FloorMesh;
 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
+    meta = (UIMin = 0.0f, ClampMin = 0.0f))
+    float TileZScale;
+
   // Scale of the tiles of the map.
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
     meta = (ClampMin = 0.0f, UIMin = 0.0f))
