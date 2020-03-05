@@ -70,13 +70,15 @@ bool APlayerCharacter::IsAlive() const {
 }
 
 void APlayerCharacter::Kill() {
-  ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
-    UGameplayStatics::GetGameMode(GetWorld()));
+  if (bIsAlive) {
+    ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
+      UGameplayStatics::GetGameMode(GetWorld()));
 
-  bIsAlive = false;
+    bIsAlive = false;
 
-  if (GameMode != NULL) {
-    GameMode->OnPlayerDeath.Broadcast(this);
+    if (GameMode != NULL) {
+      GameMode->OnPlayerDeath.Broadcast(this);
+    }
   }
 }
 

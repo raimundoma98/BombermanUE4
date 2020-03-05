@@ -24,4 +24,12 @@ public:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets",
     meta = (BindWidget))
     UTextBlock* ResultText;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets",
+    meta = (BindWidget))
+    UTextBlock* Player1ScoreText;
+
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Widgets",
+    meta = (BindWidget))
+    UTextBlock* Player2ScoreText;
 };

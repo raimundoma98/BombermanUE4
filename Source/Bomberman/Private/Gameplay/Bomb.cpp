@@ -48,6 +48,7 @@ void ABomb::Explode() {
 
   float TotalBlastDistance = 0.0f;
 
+  // Screen Shake.
   if (GameMode != NULL) {
     if (GameMode->MainCamera.IsValid()) {
       GameMode->MainCamera->ScreenShake(ExplosionScreenShakeDuration,
@@ -74,37 +75,83 @@ void ABomb::Explode() {
   FVector ForwardBlastEnd = Start + FVector::ForwardVector * TotalBlastDistance;
   FVector BackwardBlastEnd = Start + FVector::BackwardVector * TotalBlastDistance;
 
-  DrawDebugLine(GetWorld(), Start, LeftBlastEnd, FColor::Red, false, 3.0f,
-    (uint8)'\000', 5.0f);
+  // First 4 rayscast to check if there is a wall.
+  // If raycast with wall -> set blast distance as the distance between the
+  // bomb and the wall hit.
+  // Then raycast with the other elements of the game.
 
-  DrawDebugLine(GetWorld(), Start, RightBlastEnd, FColor::Red, false, 3.0f,
-    (uint8)'\000', 5.0f);
-
-  DrawDebugLine(GetWorld(), Start, ForwardBlastEnd, FColor::Red, false, 3.0f,
-    (uint8)'\000', 5.0f);
-
-  DrawDebugLine(GetWorld(), Start, BackwardBlastEnd, FColor::Red, false, 3.0f,
-    (uint8)'\000', 5.0f);
+  TArray<FHitResult> HitResults;
+  TArray<FHitResult> TotalHits;
+  
+  // Left trace to walls.
+  if (GetWorld()->LineTraceSingleByChannel(Hit, Start, LeftBlastEnd, 
+    ECollisionChannel::ECC_GameTraceChannel1, Params)) {
+    LeftBlastEnd = Start + Hit.Distance * FVector::LeftVector;
+  }
 
   // Left blast.
-  GetWorld()->LineTraceSingleByChannel(Hit, Start, LeftBlastEnd,
-    ECollisionChannel::ECC_Visibility, Params);
-  CheckBlastCollision(Hit.Actor.Get());
+  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start, LeftBlastEnd, 
+    ECollisionChannel::ECC_Visibility, Params)) {
+    //CheckBlastCollision(Hit.Actor.Get());
+    TotalHits.Append(HitResults);
+  }
+
+  DrawDebugLine(GetWorld(), Start, LeftBlastEnd, FColor::Red, false, 
+    1.0f, (uint8)'\000', 5.0f);
+
+
+  // Right trace to walls.
+  if (GetWorld()->LineTraceSingleByChannel(Hit, Start, RightBlastEnd,
+    ECollisionChannel::ECC_GameTraceChannel1, Params)) {
+    RightBlastEnd = Start + Hit.Distance * FVector::RightVector;
+  }
 
   // Right blast.
-  GetWorld()->LineTraceSingleByChannel(Hit, Start, RightBlastEnd,
-    ECollisionChannel::ECC_Visibility, Params);
-  CheckBlastCollision(Hit.Actor.Get());
+  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
+    RightBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+    //CheckBlastCollision(Hit.Actor.Get());
+    TotalHits.Append(HitResults);
+  }
 
-  // Forward blast.
-  GetWorld()->LineTraceSingleByChannel(Hit, Start, ForwardBlastEnd,
-    ECollisionChannel::ECC_Visibility, Params);
-  CheckBlastCollision(Hit.Actor.Get());
+  DrawDebugLine(GetWorld(), Start, RightBlastEnd, FColor::Red, false,
+    1.0f, (uint8)'\000', 5.0f);
 
-  // Backward blast.
-  GetWorld()->LineTraceSingleByChannel(Hit, Start, BackwardBlastEnd,
-    ECollisionChannel::ECC_Visibility, Params);
-  CheckBlastCollision(Hit.Actor.Get());
+
+  // Forward trace to walls.
+  if (GetWorld()->LineTraceSingleByChannel(Hit, Start, ForwardBlastEnd,
+    ECollisionChannel::ECC_GameTraceChannel1, Params)) {
+    ForwardBlastEnd = Start + Hit.Distance * FVector::ForwardVector;
+  }
+
+  // Right blast.
+  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
+    ForwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+    //CheckBlastCollision(Hit.Actor.Get());
+    TotalHits.Append(HitResults);
+  }
+
+  DrawDebugLine(GetWorld(), Start, ForwardBlastEnd, FColor::Red, false,
+    1.0f, (uint8)'\000', 5.0f);
+
+  // Barckward trace to walls.
+  if (GetWorld()->LineTraceSingleByChannel(Hit, Start, BackwardBlastEnd,
+    ECollisionChannel::ECC_GameTraceChannel1, Params)) {
+    BackwardBlastEnd = Start + Hit.Distance * FVector::BackwardVector;
+  }
+
+  // Right blast.
+  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
+    BackwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+    //CheckBlastCollision(Hit.Actor.Get());
+    TotalHits.Append(HitResults);
+  }
+
+  DrawDebugLine(GetWorld(), Start, BackwardBlastEnd, FColor::Red, false,
+    1.0f, (uint8)'\000', 5.0f);
+
+  for (FHitResult HitResult : TotalHits) {
+    CheckBlastCollision(HitResult.Actor);
+  }
 
   Destroy();
 }

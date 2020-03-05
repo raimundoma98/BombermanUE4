@@ -2,6 +2,7 @@
 
 
 #include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
+#include "Bomberman/Public/Core/GameFramework/BombermanGameInstance.h"
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Core/Characters/MyPlayerController.h"
 #include "Kismet/GameplayStatics.h"
@@ -21,7 +22,14 @@ void ABombermanGameModeBase::BeginPlay() {
 }
 
 void ABombermanGameModeBase::StartPlay() {
-  APlayerController* Controller = UGameplayStatics::CreatePlayer(GetWorld());
+  
+  APlayerController* Controller = UGameplayStatics::GetPlayerController(
+    GetWorld(), 1);
+  
+  // Create a new player only if there is just one player in the game.
+  if (Controller == NULL) {
+    Controller = UGameplayStatics::CreatePlayer(GetWorld());
+  }
 
   Super::StartPlay();
 }
@@ -51,13 +59,29 @@ void ABombermanGameModeBase::PlayerDeath(APlayerCharacter* Player) {
       if (Player1->IsAlive() == false && Player2->IsAlive() == false) {
         EndGame(TEXT("Draw"), FLinearColor::White);
       }
-      else if (Player1->IsAlive()) {
-        FString Result = Player1->GetName() + TEXT(" wins!");
-        EndGame(Result, FLinearColor::FromSRGBColor(Controller->Player1Color));
-      }
       else {
-        FString Result = Player2->GetName() + TEXT(" wins!");
-        EndGame(Result, FLinearColor::FromSRGBColor(Controller->Player2Color));
+        FString Result;
+        FColor WinnerColor;
+        uint8 PlayerId = 0;
+
+        if (Player1->IsAlive()) {
+          Result = Player1->GetName() + TEXT(" wins!");
+          WinnerColor = Controller->Player1Color;
+        }
+        else {
+          Result = Player2->GetName() + TEXT(" wins!");
+          WinnerColor = Controller->Player2Color;
+          PlayerId = 1;
+        }
+
+        UBombermanGameInstance* GameInstance = Cast<UBombermanGameInstance>(
+          GetGameInstance());
+
+        if (GameInstance != NULL) {
+          GameInstance->OnPlayerWins.Broadcast(PlayerId);
+        }
+
+        EndGame(Result, FLinearColor::FromSRGBColor(WinnerColor));
       }
     }
   }

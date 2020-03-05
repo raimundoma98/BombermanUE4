@@ -12,6 +12,9 @@ AWall::AWall()
 
   Mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName(TEXT("Mesh")));
   SetRootComponent(Mesh);
+
+  Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1,
+    ECollisionResponse::ECR_Block);
 }
 
 // Called when the game starts or when spawned
