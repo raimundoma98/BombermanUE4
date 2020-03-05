@@ -36,8 +36,11 @@ protected:
 
 private:
   int32 CurrentBombs;
+  TWeakObjectPtr<ABomb> LastPlacedBomb;
   int32 BombBlastDistance;
   bool bIsAlive;
+  bool bIsRemoteBomb;
+  FTimerHandle DetonatorTimer;
 
 protected:
   // Called when the game starts or when spawned
@@ -69,9 +72,15 @@ public:
   UFUNCTION()
     void MoveRight(float Value);
 
+  UFUNCTION(BlueprintCallable)
+    void PickRemoteBomb(float Duration);
+
   void SetColor(FColor Color);
 
 private:
   UFUNCTION()
     void OnBombExplode();
+
+  UFUNCTION()
+    void RemoveRemoteBomb();
 };

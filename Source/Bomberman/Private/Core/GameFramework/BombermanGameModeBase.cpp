@@ -42,7 +42,7 @@ void ABombermanGameModeBase::StartPlay() {
     if (AvailableLocations.Num() > 1) {
       if (Controller != NULL && Controller->GetPawn() != NULL) {
         FVector Location = 
-          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num())];
+          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num() - 1)];
         Location.Z = Controller->GetPawn()->GetActorLocation().Z;
         Controller->GetPawn()->SetActorLocation(Location);
       }
@@ -52,7 +52,7 @@ void ABombermanGameModeBase::StartPlay() {
 
       if (Controller != NULL && Controller->GetPawn() != NULL) {
         FVector Location =
-          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num())];
+          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num() - 1)];
         Location.Z = Controller->GetPawn()->GetActorLocation().Z;
         Controller->GetPawn()->SetActorLocation(Location);
       }

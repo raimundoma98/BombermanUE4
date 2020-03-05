@@ -50,9 +50,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-private:
+public:
   UFUNCTION()
     void Explode();
 
+private:
   void CheckBlastCollision(AActor* HitActor);
 };

@@ -7,6 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -17,6 +18,9 @@ APlayerCharacter::APlayerCharacter()
   NameText = CreateDefaultSubobject<UTextRenderComponent>(
     FName(TEXT("Name Text")));
   NameText->SetupAttachment(RootComponent);
+
+  bIsRemoteBomb = false;
+  LastPlacedBomb = NULL;
 }
 
 // Called when the game starts or when spawned
@@ -45,12 +49,20 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 }
 
 void APlayerCharacter::Action() {
+  if (bIsRemoteBomb) {
+    if (LastPlacedBomb.IsValid()) {
+      LastPlacedBomb->Explode();
+      return;
+    }
+  }
+  
   if (CurrentBombs > 0) {
     ABomb* NewBomb = GetWorld()->SpawnActor<ABomb>(BombBP, GetActorLocation(),
       FRotator::ZeroRotator);
 
     if (NewBomb != NULL) {
       --CurrentBombs;
+      LastPlacedBomb = NewBomb;
       NewBomb->OnExplode.BindUObject(this, &APlayerCharacter::OnBombExplode);
       NewBomb->ExplosionDistance = BombBlastDistance;
     }
@@ -88,6 +100,24 @@ void APlayerCharacter::MoveForward(float Value) {
 
 void APlayerCharacter::MoveRight(float Value) {
   AddMovementInput(FVector::RightVector, Value);
+}
+
+void APlayerCharacter::PickRemoteBomb(float Duration) {
+  bIsRemoteBomb = true;
+
+  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan,
+    TEXT("APlayerCharacter::PickRemoteBomb"));
+
+  GetWorldTimerManager().SetTimer(DetonatorTimer, this,
+    &APlayerCharacter::RemoveRemoteBomb, Duration, false);
+}
+
+void APlayerCharacter::RemoveRemoteBomb() {
+  bIsRemoteBomb = false;
+  GetWorldTimerManager().ClearTimer(DetonatorTimer);
+
+  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Cyan,
+    TEXT("APlayerCharacter::RemoveRemoteBomb"));
 }
 
 void APlayerCharacter::SetColor(FColor Color) {

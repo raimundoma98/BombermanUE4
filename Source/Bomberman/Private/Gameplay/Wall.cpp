@@ -51,8 +51,12 @@ void AWall::Break() {
       TSubclassOf<APickup> PickupBP = 
         PickupsBP[FMath::RandRange(0, PickupsBP.Num() - 1)];
       
-      APickup* Pickup = GetWorld()->SpawnActor<APickup>(PickupBP, GetActorLocation(), 
-        FRotator::ZeroRotator);
+      FVector Center;
+      FVector Extent;
+      //GetActorBounds(true, Center, Extent);
+
+      APickup* Pickup = GetWorld()->SpawnActor<APickup>(PickupBP, 
+        GetActorLocation() + FVector::UpVector * 100.0f, FRotator::ZeroRotator);
     }
 
     Destroy();
