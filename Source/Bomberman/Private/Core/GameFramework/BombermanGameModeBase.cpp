@@ -5,6 +5,7 @@
 #include "Bomberman/Public/Core/GameFramework/BombermanGameInstance.h"
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Core/Characters/MyPlayerController.h"
+#include "Bomberman/Public/Gameplay/MapGenerator.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
@@ -32,6 +33,31 @@ void ABombermanGameModeBase::StartPlay() {
   }
 
   Super::StartPlay();
+
+  // Move players to a valid location in the map.
+  if (MapGenerator.IsValid()) {
+    const TArray<FVector>& AvailableLocations =
+      MapGenerator->GetAvailableStartLocations();
+
+    if (AvailableLocations.Num() > 1) {
+      if (Controller != NULL && Controller->GetPawn() != NULL) {
+        FVector Location = 
+          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num())];
+        Location.Z = Controller->GetPawn()->GetActorLocation().Z;
+        Controller->GetPawn()->SetActorLocation(Location);
+      }
+      
+      Controller = UGameplayStatics::GetPlayerController(
+          GetWorld(), 0);
+
+      if (Controller != NULL && Controller->GetPawn() != NULL) {
+        FVector Location =
+          AvailableLocations[FMath::RandRange(0, AvailableLocations.Num())];
+        Location.Z = Controller->GetPawn()->GetActorLocation().Z;
+        Controller->GetPawn()->SetActorLocation(Location);
+      }
+    }
+  }
 }
 
 void ABombermanGameModeBase::CountDownFinished() {

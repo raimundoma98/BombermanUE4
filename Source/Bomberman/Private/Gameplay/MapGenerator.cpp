@@ -95,16 +95,22 @@ void AMapGenerator::GenerateMap() {
           FRotator::ZeroRotator);
 
         Wall->SetActorScale3D(FVector(TileScale, TileScale, TileZScale));
-        // TODO: Adjust Z location.
 
-        // Choose randomly if a wall is destructible or not.
-        Wall->SetDestructible(FMath::RandBool());
+        // Wall is indestructible is if placed in an even tile.
+        Wall->SetDestructible(!(i % 2 == 0 && j % 2 == 0));
+      }
+      else {
+        AvailableStartLocations.Add(Location);
       }
       Location.Y += TileSize;
     }
     Location.Y = TopLeft.Y;
     Location.X += TileSize;
   }
+}
+
+const TArray<FVector>& AMapGenerator::GetAvailableStartLocations() const {
+  return AvailableStartLocations;
 }
 
 float AMapGenerator::GetTileSize() const {

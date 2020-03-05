@@ -92,7 +92,6 @@ void ABomb::Explode() {
   // Left blast.
   if (GetWorld()->LineTraceMultiByChannel(HitResults, Start, LeftBlastEnd, 
     ECollisionChannel::ECC_Visibility, Params)) {
-    //CheckBlastCollision(Hit.Actor.Get());
     TotalHits.Append(HitResults);
   }
 
@@ -109,7 +108,6 @@ void ABomb::Explode() {
   // Right blast.
   if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
     RightBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
-    //CheckBlastCollision(Hit.Actor.Get());
     TotalHits.Append(HitResults);
   }
 
@@ -126,7 +124,6 @@ void ABomb::Explode() {
   // Right blast.
   if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
     ForwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
-    //CheckBlastCollision(Hit.Actor.Get());
     TotalHits.Append(HitResults);
   }
 
@@ -142,7 +139,6 @@ void ABomb::Explode() {
   // Right blast.
   if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
     BackwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
-    //CheckBlastCollision(Hit.Actor.Get());
     TotalHits.Append(HitResults);
   }
 
@@ -150,7 +146,7 @@ void ABomb::Explode() {
     1.0f, (uint8)'\000', 5.0f);
 
   for (FHitResult HitResult : TotalHits) {
-    CheckBlastCollision(HitResult.Actor);
+    CheckBlastCollision(HitResult.Actor.Get());
   }
 
   Destroy();

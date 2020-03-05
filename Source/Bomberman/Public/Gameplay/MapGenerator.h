@@ -47,6 +47,9 @@ protected:
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Debug")
     float TileSize;
 
+private:
+  TArray<FVector> AvailableStartLocations;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,6 +59,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
   void GenerateMap();
+  const TArray<FVector>& GetAvailableStartLocations() const;
   float GetTileSize() const;
 
   UFUNCTION(CallInEditor, Category = "Debug")
