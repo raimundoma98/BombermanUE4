@@ -27,6 +27,7 @@ void APlayerCharacter::BeginPlay()
   NameText->SetText(FText::FromString(GetName()));
   CurrentBombs = StartBombs;
   BombBlastDistance = StartBombBlastDistance;
+  bIsAlive = true;
 }
 
 // Called every frame
@@ -64,9 +65,15 @@ void APlayerCharacter::IncreaseBombBlastDistance(int32 Increment) {
   BombBlastDistance += Increment;
 }
 
+bool APlayerCharacter::IsAlive() const {
+  return bIsAlive;
+}
+
 void APlayerCharacter::Kill() {
   ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
     UGameplayStatics::GetGameMode(GetWorld()));
+
+  bIsAlive = false;
 
   if (GameMode != NULL) {
     GameMode->OnPlayerDeath.Broadcast(this);

@@ -67,6 +67,14 @@ void AMyPlayerController::BeginPlay() {
   }*/
 }
 
+APlayerCharacter* AMyPlayerController::GetPlayer1() const {
+  return Player1;
+}
+
+APlayerCharacter* AMyPlayerController::GetPlayer2() const {
+  return Player2;
+}
+
 void AMyPlayerController::SetupInputComponent() {
   Super::SetupInputComponent();
 

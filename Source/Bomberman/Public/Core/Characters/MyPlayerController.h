@@ -32,6 +32,10 @@ protected:
   UPROPERTY()
     APlayerCharacter* Player2;
 
+public:
+  APlayerCharacter* GetPlayer1() const;
+  APlayerCharacter* GetPlayer2() const;
+
 protected:
   virtual void BeginPlay() override;
   virtual void SetupInputComponent() override;

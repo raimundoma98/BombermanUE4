@@ -41,8 +41,17 @@ private:
 public:
   virtual void StartPlay() override;
 
+  UFUNCTION(BlueprintCallable)
+    float GetCountDownDuration() const;
+
+  UFUNCTION(BlueprintCallable)
+    float GetTimeRemaining() const;
+
 protected:
   virtual void BeginPlay() override;
+
+  UFUNCTION(BlueprintImplementableEvent)
+  void EndGame(const FString& ResultText, FLinearColor TextColor);
 
 private:
   UFUNCTION()

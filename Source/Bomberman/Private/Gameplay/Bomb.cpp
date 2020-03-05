@@ -5,6 +5,7 @@
 #include "Bomberman/Public/Gameplay/Wall.h"
 #include "Bomberman/Public/Gameplay/BombermanCameraActor.h"
 #include "Bomberman/Public/Gameplay/MapGenerator.h"
+#include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "kismet/GameplayStatics.h"
 #include "TimerManager.h"
@@ -119,6 +120,13 @@ void ABomb::CheckBlastCollision(AActor* HitActor) {
     }
     else if (HitActor->ActorHasTag(TEXT("Player"))) {
       // Kill player.
+      APlayerCharacter* Player = Cast<APlayerCharacter>(HitActor);
+
+      GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
+        TEXT("ABomb::CheckBlastCollision: Kill Player"));
+
+      if (Player != NULL)
+        Player->Kill();
     }
     else if (HitActor->ActorHasTag(TEXT("Wall"))) {
       AWall* Wall = Cast<AWall>(HitActor);

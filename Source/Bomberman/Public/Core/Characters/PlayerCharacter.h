@@ -37,6 +37,7 @@ protected:
 private:
   int32 CurrentBombs;
   int32 BombBlastDistance;
+  bool bIsAlive;
 
 protected:
   // Called when the game starts or when spawned
@@ -57,6 +58,8 @@ public:
 
   UFUNCTION(BlueprintCallable)
     void IncreaseBombBlastDistance(int32 Units = 1);
+
+  bool IsAlive() const;
 
   void Kill();
 

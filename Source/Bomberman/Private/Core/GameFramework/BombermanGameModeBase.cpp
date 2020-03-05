@@ -3,6 +3,7 @@
 
 #include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
+#include "Bomberman/Public/Core/Characters/MyPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 
@@ -26,13 +27,38 @@ void ABombermanGameModeBase::StartPlay() {
 }
 
 void ABombermanGameModeBase::CountDownFinished() {
-  // Show draw image.
-  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
-    TEXT("ABombermanGameModeBase::CountDownFinished"));
+  EndGame(TEXT("Draw"), FLinearColor::White);
+
+  GetWorldTimerManager().ClearTimer(CountDownTimer);
+}
+
+float ABombermanGameModeBase::GetCountDownDuration() const {
+  return CountDownDuration;
+}
+
+float ABombermanGameModeBase::GetTimeRemaining() const {
+  return GetWorldTimerManager().GetTimerRemaining(CountDownTimer);
 }
 
 void ABombermanGameModeBase::PlayerDeath(APlayerCharacter* Player) {
-  // Show player victory.
-  GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
-    TEXT("ABombermanGameModeBase::PlayerDeath"));
+  AMyPlayerController* Controller = Cast<AMyPlayerController>(
+    UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+  if (Controller != NULL) {
+    APlayerCharacter* Player1 = Controller->GetPlayer1();
+    APlayerCharacter* Player2 = Controller->GetPlayer2();
+    if (Player1 != NULL && Player2 != NULL) {
+      if (Player1->IsAlive() == false && Player2->IsAlive() == false) {
+        EndGame(TEXT("Draw"), FLinearColor::White);
+      }
+      else if (Player1->IsAlive()) {
+        FString Result = Player1->GetName() + TEXT(" wins!");
+        EndGame(Result, FLinearColor::FromSRGBColor(Controller->Player1Color));
+      }
+      else {
+        FString Result = Player2->GetName() + TEXT(" wins!");
+        EndGame(Result, FLinearColor::FromSRGBColor(Controller->Player2Color));
+      }
+    }
+  }
 }
