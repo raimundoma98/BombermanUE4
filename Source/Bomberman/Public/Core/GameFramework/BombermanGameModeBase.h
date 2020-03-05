@@ -10,7 +10,7 @@ class APlayerCharacter;
 class ABombermanCameraActor;
 class AMapGenerator;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDeath, APlayerCharacter*)
+DECLARE_MULTICAST_DELEGATE(FOnPlayerDeath)
 
 /**
  * 
@@ -37,9 +37,13 @@ protected:
 
 private:
   FTimerHandle CountDownTimer;
+  TWeakObjectPtr<APlayerCharacter> Player1;
+  TWeakObjectPtr<APlayerCharacter> Player2;
 
 public:
   virtual void StartPlay() override;
+
+  void CheckEndGame();
 
   UFUNCTION(BlueprintCallable)
     float GetCountDownDuration() const;
@@ -58,5 +62,5 @@ private:
     void CountDownFinished();
 
   UFUNCTION()
-    void PlayerDeath(APlayerCharacter* Player);
+    void PlayerDeath();
 };

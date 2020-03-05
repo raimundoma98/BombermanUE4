@@ -45,8 +45,6 @@ void AWall::Break() {
 
     if (SpawnPickupProbability > 0 &&
       FMath::RandRange(0, 99) < SpawnPickupProbability) {
-      GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow,
-        TEXT("AWall::Break: Spawn Pickup"));
 
       TSubclassOf<APickup> PickupBP = 
         PickupsBP[FMath::RandRange(0, PickupsBP.Num() - 1)];
@@ -56,7 +54,7 @@ void AWall::Break() {
       //GetActorBounds(true, Center, Extent);
 
       APickup* Pickup = GetWorld()->SpawnActor<APickup>(PickupBP, 
-        GetActorLocation() + FVector::UpVector * 100.0f, FRotator::ZeroRotator);
+        GetActorLocation(), FRotator::ZeroRotator);
     }
 
     Destroy();

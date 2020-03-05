@@ -23,10 +23,10 @@ void ABombermanGameModeBase::BeginPlay() {
 }
 
 void ABombermanGameModeBase::StartPlay() {
-  
+
   APlayerController* Controller = UGameplayStatics::GetPlayerController(
     GetWorld(), 1);
-  
+
   // Create a new player only if there is just one player in the game.
   if (Controller == NULL) {
     Controller = UGameplayStatics::CreatePlayer(GetWorld());
@@ -41,14 +41,14 @@ void ABombermanGameModeBase::StartPlay() {
 
     if (AvailableLocations.Num() > 1) {
       if (Controller != NULL && Controller->GetPawn() != NULL) {
-        FVector Location = 
+        FVector Location =
           AvailableLocations[FMath::RandRange(0, AvailableLocations.Num() - 1)];
         Location.Z = Controller->GetPawn()->GetActorLocation().Z;
         Controller->GetPawn()->SetActorLocation(Location);
       }
-      
+
       Controller = UGameplayStatics::GetPlayerController(
-          GetWorld(), 0);
+        GetWorld(), 0);
 
       if (Controller != NULL && Controller->GetPawn() != NULL) {
         FVector Location =
@@ -57,6 +57,22 @@ void ABombermanGameModeBase::StartPlay() {
         Controller->GetPawn()->SetActorLocation(Location);
       }
     }
+  }
+
+  // Store references to players.
+  AMyPlayerController* MyPlayerController = Cast<AMyPlayerController>(
+    UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+  if (MyPlayerController != NULL) {
+    Player1 = MyPlayerController->GetPlayer1();
+    Player2 = MyPlayerController->GetPlayer2();
+  }
+}
+
+void ABombermanGameModeBase::CheckEndGame() {
+  if ((Player1.IsValid() && Player1->IsAlive() == false) ||
+    (Player2.IsValid() && Player2->IsAlive() == false)) {
+    PlayerDeath();
   }
 }
 
@@ -74,14 +90,12 @@ float ABombermanGameModeBase::GetTimeRemaining() const {
   return GetWorldTimerManager().GetTimerRemaining(CountDownTimer);
 }
 
-void ABombermanGameModeBase::PlayerDeath(APlayerCharacter* Player) {
+void ABombermanGameModeBase::PlayerDeath() {
   AMyPlayerController* Controller = Cast<AMyPlayerController>(
     UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
   if (Controller != NULL) {
-    APlayerCharacter* Player1 = Controller->GetPlayer1();
-    APlayerCharacter* Player2 = Controller->GetPlayer2();
-    if (Player1 != NULL && Player2 != NULL) {
+    if (Player1.IsValid() && Player2.IsValid()) {
       if (Player1->IsAlive() == false && Player2->IsAlive() == false) {
         EndGame(TEXT("Draw"), FLinearColor::White);
       }

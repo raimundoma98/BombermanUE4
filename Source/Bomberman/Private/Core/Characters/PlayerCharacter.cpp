@@ -3,7 +3,6 @@
 
 #include "Bomberman/Public/Core/Characters/PlayerCharacter.h"
 #include "Bomberman/Public/Gameplay/Bomb.h"
-#include "Bomberman/Public/Core/GameFramework/BombermanGameModeBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -82,16 +81,7 @@ bool APlayerCharacter::IsAlive() const {
 }
 
 void APlayerCharacter::Kill() {
-  if (bIsAlive) {
-    ABombermanGameModeBase* GameMode = Cast<ABombermanGameModeBase>(
-      UGameplayStatics::GetGameMode(GetWorld()));
-
-    bIsAlive = false;
-
-    if (GameMode != NULL) {
-      GameMode->OnPlayerDeath.Broadcast(this);
-    }
-  }
+  bIsAlive = false;
 }
 
 void APlayerCharacter::MoveForward(float Value) {

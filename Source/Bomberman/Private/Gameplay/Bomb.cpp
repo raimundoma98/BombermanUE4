@@ -65,7 +65,7 @@ void ABomb::Explode() {
   SetActorEnableCollision(false);
   OnExplode.ExecuteIfBound();
 
-  FCollisionQueryParams Params;
+  FCollisionQueryParams Params(FName(TEXT("BombTrace")));
   Params.AddIgnoredActor(this);
   
   FHitResult Hit;
@@ -80,6 +80,12 @@ void ABomb::Explode() {
   // bomb and the wall hit.
   // Then raycast with the other elements of the game.
 
+  FCollisionObjectQueryParams ObjectParams;
+  ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
+  ObjectParams.ObjectTypesToQuery = ObjectParams.AllObjects;
+  ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
+  ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
+
   TArray<FHitResult> HitResults;
   TArray<FHitResult> TotalHits;
   
@@ -90,14 +96,13 @@ void ABomb::Explode() {
   }
 
   // Left blast.
-  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start, LeftBlastEnd, 
-    ECollisionChannel::ECC_Visibility, Params)) {
+  if (GetWorld()->LineTraceMultiByObjectType(HitResults, Start, LeftBlastEnd,
+    ObjectParams, Params)) {
     TotalHits.Append(HitResults);
   }
 
-  DrawDebugLine(GetWorld(), Start, LeftBlastEnd, FColor::Red, false, 
-    1.0f, (uint8)'\000', 5.0f);
-
+  DrawDebugLine(GetWorld(), Start, LeftBlastEnd, FColor::Red, false, 1.0f,
+    (uint8)'\000', 5.0f);
 
   // Right trace to walls.
   if (GetWorld()->LineTraceSingleByChannel(Hit, Start, RightBlastEnd,
@@ -106,14 +111,13 @@ void ABomb::Explode() {
   }
 
   // Right blast.
-  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
-    RightBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+  if (GetWorld()->LineTraceMultiByObjectType(HitResults, Start, RightBlastEnd,
+    ObjectParams, Params)) {
     TotalHits.Append(HitResults);
   }
 
-  DrawDebugLine(GetWorld(), Start, RightBlastEnd, FColor::Red, false,
-    1.0f, (uint8)'\000', 5.0f);
-
+  DrawDebugLine(GetWorld(), Start, RightBlastEnd, FColor::Red, false, 1.0f,
+    (uint8)'\000', 5.0f);
 
   // Forward trace to walls.
   if (GetWorld()->LineTraceSingleByChannel(Hit, Start, ForwardBlastEnd,
@@ -121,14 +125,14 @@ void ABomb::Explode() {
     ForwardBlastEnd = Start + Hit.Distance * FVector::ForwardVector;
   }
 
-  // Right blast.
-  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
-    ForwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+  // Forward blast.
+  if (GetWorld()->LineTraceMultiByObjectType(HitResults, Start, ForwardBlastEnd,
+    ObjectParams, Params)) {
     TotalHits.Append(HitResults);
   }
 
-  DrawDebugLine(GetWorld(), Start, ForwardBlastEnd, FColor::Red, false,
-    1.0f, (uint8)'\000', 5.0f);
+  DrawDebugLine(GetWorld(), Start, ForwardBlastEnd, FColor::Red, false, 1.0f,
+    (uint8)'\000', 5.0f);
 
   // Barckward trace to walls.
   if (GetWorld()->LineTraceSingleByChannel(Hit, Start, BackwardBlastEnd,
@@ -137,17 +141,21 @@ void ABomb::Explode() {
   }
 
   // Right blast.
-  if (GetWorld()->LineTraceMultiByChannel(HitResults, Start,
-    BackwardBlastEnd, ECollisionChannel::ECC_Visibility, Params)) {
+  if (GetWorld()->LineTraceMultiByObjectType(HitResults, Start, BackwardBlastEnd,
+    ObjectParams, Params)) {
     TotalHits.Append(HitResults);
   }
 
-  DrawDebugLine(GetWorld(), Start, BackwardBlastEnd, FColor::Red, false,
-    1.0f, (uint8)'\000', 5.0f);
+  DrawDebugLine(GetWorld(), Start, BackwardBlastEnd, FColor::Red, false, 1.0f,
+    (uint8)'\000', 5.0f);
+
+  //GetWorld()->DebugDrawTraceTag = "BombTrace";
 
   for (FHitResult HitResult : TotalHits) {
     CheckBlastCollision(HitResult.Actor.Get());
   }
+
+  GameMode->CheckEndGame();
 
   Destroy();
 }
@@ -164,9 +172,6 @@ void ABomb::CheckBlastCollision(AActor* HitActor) {
     else if (HitActor->ActorHasTag(TEXT("Player"))) {
       // Kill player.
       APlayerCharacter* Player = Cast<APlayerCharacter>(HitActor);
-
-      GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
-        TEXT("ABomb::CheckBlastCollision: Kill Player"));
 
       if (Player != NULL)
         Player->Kill();
