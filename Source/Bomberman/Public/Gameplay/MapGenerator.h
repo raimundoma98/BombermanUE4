@@ -19,33 +19,33 @@ public:
 	AMapGenerator();
 
 	// Generate the map when the game starts.
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGenerator")
     bool bGenerateMapOnBeginPlay;
 
 protected:
   // Floor mesh of the map.
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MapGenerator")
     UStaticMeshComponent* FloorMesh;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGenerator",
     meta = (UIMin = 0.0f, ClampMin = 0.0f))
     float TileZScale;
 
   // Scale of the tiles of the map.
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties",
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGenerator",
     meta = (ClampMin = 0.0f, UIMin = 0.0f))
     float TileScale;
 
   // Number of tiles in each axis.
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties", 
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGenerator", 
     meta = (ClampMin = 4, UIMin = 4))
     int32 MapSize;
 
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGenerator")
     TSubclassOf<AWall> WallBP;
 
   // Size of the tiles of the map.
-  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Debug")
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MapGenerator|Debug")
     float TileSize;
 
 private:
@@ -63,6 +63,6 @@ public:
   const TArray<FVector>& GetAvailableStartLocations() const;
   float GetTileSize() const;
 
-  UFUNCTION(CallInEditor, Category = "Debug")
+  UFUNCTION(CallInEditor, Category = "MapGenerator|Debug")
     void ShowDebugGrid();
 };
