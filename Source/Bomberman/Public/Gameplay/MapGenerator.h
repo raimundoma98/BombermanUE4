@@ -18,11 +18,12 @@ public:
 	// Sets default values for this actor's properties
 	AMapGenerator();
 
+	// Generate the map when the game starts.
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
     bool bGenerateMapOnBeginPlay;
 
 protected:
-  // Mesh that represents the floor of the map.
+  // Floor mesh of the map.
   UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UStaticMeshComponent* FloorMesh;
 

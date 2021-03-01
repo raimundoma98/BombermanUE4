@@ -118,7 +118,7 @@ void ABombermanGameModeBase::PlayerDeath() {
           GetGameInstance());
 
         if (GameInstance != NULL) {
-          GameInstance->OnPlayerWins.Broadcast(PlayerId);
+          //GameInstance->OnPlayerWins.Broadcast(PlayerId);
         }
 
         EndGame(Result, FLinearColor::FromSRGBColor(WinnerColor));

@@ -8,8 +8,6 @@
 
 class ABombermanGameModeBase;
 
-DECLARE_EVENT_OneParam(ABombermanGameModeBase, FOnPlayerWins, uint8)
-
 /**
  * 
  */
@@ -20,23 +18,4 @@ class BOMBERMAN_API UBombermanGameInstance : public UGameInstance
 	
 public:
   UBombermanGameInstance();
-
-  FOnPlayerWins OnPlayerWins;
-
-private:
-  int32 Player1Score;
-  int32 Player2Score;
-
-public:
-  virtual void Init() override;
-  
-  UFUNCTION(BlueprintCallable)
-    int32 GetPlayer1Score() const;
-
-  UFUNCTION(BlueprintCallable)
-    int32 GetPlayer2Score() const;
-
-private:
-  UFUNCTION()
-    void AddScoreToPlayer(uint8 PlayerId);
 };

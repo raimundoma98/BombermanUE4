@@ -14,8 +14,7 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-  NameText = CreateDefaultSubobject<UTextRenderComponent>(
-    FName(TEXT("Name Text")));
+  NameText = CreateDefaultSubobject<UTextRenderComponent>(TEXT("Name Text"));
   NameText->SetupAttachment(RootComponent);
 
   bIsRemoteBomb = false;
