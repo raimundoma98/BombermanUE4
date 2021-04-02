@@ -65,4 +65,7 @@ public:
 
   UFUNCTION(CallInEditor, Category = "MapGenerator|Debug")
     void ShowDebugGrid();
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE UStaticMeshComponent* GetFloorMeshComponent() const { return FloorMesh; }
 };

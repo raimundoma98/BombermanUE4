@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "MapGeneratorFromTexture.generated.h"
-
+#include "GridMapTileData.h"
+#include "GridMapGeneratorFromTexture.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class BOMBERMAN_API UMapGeneratorFromTexture : public UActorComponent
+class BOMBERMAN_API UGridMapGeneratorFromTexture : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UMapGeneratorFromTexture();
+	UGridMapGeneratorFromTexture();
 
 protected:
 	// Called when the game starts
@@ -27,16 +27,22 @@ public:
 	UFUNCTION(BlueprintCallable, CallInEditor)
 		void GenerateMap();
 
+	UFUNCTION(BlueprintCallable, CallInEditor)
+		void ClearMap();
+
+	UFUNCTION(BlueprintCallable)
+		FORCEINLINE FVector GetTileSize() const { return TileSize; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGeneratorFromTexture")
 		class UTexture2D* MapTexture;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGeneratorFromTexture")
-		FVector2D TileSize;
+		FVector TileSize;
 
 	// Convert a color to a tile actor.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGeneratorFromTexture")
-		TMap<FColor, TSubclassOf<AActor>> ColorToTileMap;
+		TMap<FColor, FGridMapTileData> ColorToTileMap;
 
 	// Tile that will be spawned when a color is not found on the ColorToTileMap.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MapGeneratorFromTexture")
